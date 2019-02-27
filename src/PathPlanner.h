@@ -6,6 +6,14 @@
 
 #include <vector>
 
+struct map_waypoints {
+    vector<double> x;
+    vector<double> y;
+    vector<double> s;
+    vector<double> dx;
+    vector<double> dy;
+};
+
 class PathPlanner {
 
 public:
@@ -38,7 +46,7 @@ public:
 
     PathPlanner() = default;
 
-    virtual output plan(const input& in) = 0;
+    virtual output plan(const input& in, const map_waypoints& wp) = 0;
 
 };
 
