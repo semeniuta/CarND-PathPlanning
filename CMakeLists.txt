@@ -22,5 +22,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 add_executable(path_planning src/main.cpp ${core_sources})
-
 target_link_libraries(path_planning z ssl uv uWS)
+
+add_executable(playground src/playground.cpp ${core_sources})
+

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <cmath>
 
 // for convenience
 using std::string;
@@ -168,5 +169,40 @@ void printVector(const std::vector<double>& vec) {
   std::cout << vec[vec.size() - 1] << "]\n";
 
 }
+
+
+std::vector<double> accel(double start_v, double target_v, double accel_t=0.5) {
+
+  const int TRAJ_SIZE = 50;
+  const double DT = 0.02;
+
+  double target_dx = target_v * DT;
+  double start_dx = start_v * DT;
+
+  int n_incr_const_speed = TRAJ_SIZE;
+  std::vector<double> res;
+
+  if (start_v < target_v) {
+
+    int n_incr_zero_to_target = (int)(accel_t / DT); // e.g. 1. / 0.2 = 50
+    double delta = target_dx / n_incr_zero_to_target;
+
+    auto n_incr_accel = (int)ceil((target_dx - start_dx) / delta);
+    n_incr_const_speed = TRAJ_SIZE - n_incr_accel;
+
+    for (unsigned int i = 1; i <= n_incr_accel; i++) {
+      res.push_back(start_dx + delta * i);
+    }
+
+  }
+
+  for (unsigned int i = 1; i <= n_incr_const_speed; i++) {
+    res.push_back(target_dx);
+  }
+
+  return res;
+
+}
+
 
 #endif  // HELPERS_H

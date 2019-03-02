@@ -3,6 +3,7 @@
 //
 
 #ifndef PATH_PLANNING_INIT_H
+#define PATH_PLANNING_INIT_H
 
 #include <string>
 #include "PathPlanner.h"
@@ -170,8 +171,5 @@ void initHub(uWS::Hub& h,
   });
 
 }
-
-
-#define PATH_PLANNING_INIT_H
 
 #endif //PATH_PLANNING_INIT_H

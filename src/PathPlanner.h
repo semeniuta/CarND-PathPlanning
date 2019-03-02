@@ -3,6 +3,7 @@
 //
 
 #ifndef PATH_PLANNING_PATHPLANNER_H
+#define PATH_PLANNING_PATHPLANNER_H
 
 #include <vector>
 
@@ -49,7 +50,5 @@ public:
   virtual output plan(const input& in, const map_waypoints& wp) = 0;
 
 };
-
-#define PATH_PLANNING_PATHPLANNER_H
 
 #endif //PATH_PLANNING_PATHPLANNER_H

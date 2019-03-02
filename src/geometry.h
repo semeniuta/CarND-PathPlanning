@@ -3,6 +3,7 @@
 //
 
 #ifndef PATH_PLANNING_GEOMETRY_H
+#define PATH_PLANNING_GEOMETRY_H
 
 #include "Eigen-3.3/Eigen/Dense"
 #include "PathPlanner.h"
@@ -19,7 +20,5 @@ std::pair<unsigned int, unsigned int> getSegment(
     unsigned int closest_idx,
     double car_s
 );
-
-#define PATH_PLANNING_GEOMETRY_H
 
 #endif //PATH_PLANNING_GEOMETRY_H
