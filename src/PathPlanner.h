@@ -7,11 +7,11 @@
 #include <vector>
 
 struct map_waypoints {
-    vector<double> x;
-    vector<double> y;
-    vector<double> s;
-    vector<double> dx;
-    vector<double> dy;
+    std::vector<double> x;
+    std::vector<double> y;
+    std::vector<double> s;
+    std::vector<double> dx;
+    std::vector<double> dy;
 };
 
 class PathPlanner {
@@ -40,8 +40,8 @@ public:
     };
 
     struct output {
-        vector<double> next_x_vals;
-        vector<double> next_y_vals;
+        std::vector<double> next_x_vals;
+        std::vector<double> next_y_vals;
     };
 
     PathPlanner() = default;

@@ -152,6 +152,19 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s,
   double y = seg_y + d*sin(perp_heading);
 
   return {x,y};
+
+}
+
+void printVector(const std::vector<double>& vec) {
+
+  std::cout << "[";
+
+  for (unsigned int i = 0; i < vec.size() - 1; i++) {
+    std::cout << vec[i] << ", ";
+  }
+
+  std::cout << vec[vec.size() - 1] << "]\n";
+
 }
 
 #endif  // HELPERS_H
