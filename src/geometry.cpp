@@ -69,7 +69,7 @@ std::pair<unsigned int, unsigned int> getSegment(
       return {closest_idx, 0};
     }
 
-    return {closest_idx, closest_idx+1};
+    return {closest_idx, closest_idx + 1};
   }
 
   if (closest_idx == 0) {
