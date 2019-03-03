@@ -64,4 +64,8 @@ void printPrevPathDetails(const PathPlanner::input& in);
 
 void printNextXY(const PathPlanner::output& out);
 
+double MPH2Metric(double s);
+
+double laneD(int lane_index);
+
 #endif  // HELPERS_H

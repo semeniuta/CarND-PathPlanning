@@ -13,16 +13,15 @@
 PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, const map_waypoints& wp) {
 
   const int TRAJ_SIZE = 50;
-  const double TARGET_VELOCITY = 22; // m/s
   const double DT = 0.02;
+
+  double target_velocity = MPH2Metric(49.5);
+  double lane_d = laneD(1);
 
   PathPlanner::output out{};
 
   printCarState(in);
   printPrevPathDetails(in);
-
-  int lane = 1;
-  double lane_d = 2. + 4. * lane;
 
   auto prev_path_size = in.previous_path_x.size();
 
@@ -94,7 +93,7 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
 
   }
 
-  double dx = TARGET_VELOCITY * DT;
+  double dx = target_velocity * DT;
   auto n_poly_points = TRAJ_SIZE - prev_path_size;
 
   for (unsigned int i = 0; i < n_poly_points; i++) {

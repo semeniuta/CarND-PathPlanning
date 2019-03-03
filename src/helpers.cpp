@@ -390,3 +390,16 @@ void printNextXY(const PathPlanner::output& out) {
   printVector(out.next_y_vals);
 
 }
+
+double MPH2Metric(double s) {
+
+  const double MPH_to_meters_per_second = 0.44704;
+  return s * MPH_to_meters_per_second;
+
+}
+
+double laneD(int lane_index) {
+
+  return  2. + 4. * lane_index;
+
+}
