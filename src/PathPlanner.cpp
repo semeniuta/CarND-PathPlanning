@@ -19,6 +19,7 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
   PathPlanner::output out{};
 
   std::cout << "car = [" << in.car_x << ", " << in.car_y << "]\n";
+  std::cout << "speed = " << in.car_speed << "\n";
   std::cout << "prev_path_size = " << in.previous_path_x.size() << std::endl;
   if (!in.previous_path_x.empty()) {
     std::cout << "prev_path_first = [" << in.previous_path_x[0] << ", " << in.previous_path_y[0] << "]\n";
@@ -105,10 +106,11 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
   }
 
   double dx = TARGET_VELOCITY * DT;
+  auto n_poly_points = TRAJ_SIZE - prev_path_size;
 
-  for (unsigned int i = 0; i < TRAJ_SIZE - prev_path_size; i++) {
+  for (unsigned int i = 0; i < n_poly_points; i++) {
 
-    double x = i * dx;
+    double x = (i + 1) * dx;
     double y = polyeval(coeffs, x);
 
     Eigen::VectorXd p{3};
