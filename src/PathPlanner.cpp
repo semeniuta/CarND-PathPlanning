@@ -23,10 +23,12 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
   printCarState(in);
   printPrevPathDetails(in);
 
-  auto prev_path_size = in.previous_path_x.size();
+  // Prepare the reference state
 
   Eigen::VectorXd ref_state{3};
   double ref_yaw;
+
+  auto prev_path_size = in.previous_path_x.size();
 
   std::vector<Eigen::VectorXd> points;
 
@@ -51,8 +53,12 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
 
   }
 
+  // Create homogeneous transformations (ego-in-world, world-in-ego)
+
   Eigen::MatrixXd ego_pose = createPose(ref_state(0), ref_state(1), ref_yaw);
   Eigen::MatrixXd to_ego = invertPose(ego_pose);
+
+  // Fit polynomial
 
   points.push_back(ref_state);
 
@@ -82,6 +88,8 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
 
   Eigen::VectorXd coeffs = polyfit(anchor_x, anchor_y, 3);
 
+  // Fill the next x/y values with the previous path
+
   if (!in.previous_path_x.empty()) {
 
     for (unsigned i = 0; i < prev_path_size; i++) {
@@ -92,6 +100,9 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
     }
 
   }
+
+  // Fill the rest of the next x/y values with
+  // the values based on the polynomial
 
   double dx = target_velocity * DT;
   auto n_poly_points = TRAJ_SIZE - prev_path_size;
