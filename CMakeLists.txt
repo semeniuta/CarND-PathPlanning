@@ -7,7 +7,7 @@ add_definitions(-std=c++11)
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 
-set(core_sources src/geometry.cpp)
+set(core_sources src/helpers.cpp src/geometry.cpp src/PathPlanner.cpp)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 

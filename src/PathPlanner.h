@@ -51,4 +51,22 @@ public:
 
 };
 
+
+class SimplePathPlanner : public PathPlanner {
+
+public:
+
+  PathPlanner::output plan(const PathPlanner::input& in, const map_waypoints& wp) override;
+
+};
+
+
+class StraightPathPlanner : public PathPlanner {
+
+public:
+
+  PathPlanner::output plan(const PathPlanner::input& in, const map_waypoints& wp) override;
+
+};
+
 #endif //PATH_PLANNING_PATHPLANNER_H
