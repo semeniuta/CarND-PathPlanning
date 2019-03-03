@@ -362,3 +362,31 @@ std::vector<double> accel(double start_v, double target_v, double accel_t) {
   return res;
 
 }
+
+void printCarState(const PathPlanner::input& in) {
+
+  std::cout << "car_xy = [" << in.car_x << ", " << in.car_y << "]\n";
+  std::cout << "car_sd = [" << in.car_s << ", " << in.car_d << "]\n";
+  std::cout << "car_yaw = " << in.car_yaw << "\n";
+  std::cout << "car_speed = " << in.car_speed << "\n";
+
+}
+
+void printPrevPathDetails(const PathPlanner::input& in) {
+
+  std::cout << "prev_path_size = " << in.previous_path_x.size() << std::endl;
+  if (!in.previous_path_x.empty()) {
+    std::cout << "prev_path_first = [" << in.previous_path_x[0] << ", " << in.previous_path_y[0] << "]\n";
+  }
+
+}
+
+void printNextXY(const PathPlanner::output& out) {
+
+  std::cout << "x = ";
+  printVector(out.next_x_vals);
+
+  std::cout << "y = ";
+  printVector(out.next_y_vals);
+
+}

@@ -58,5 +58,10 @@ void printVector(const std::vector<double>& vec);
 
 std::vector<double> accel(double start_v, double target_v, double accel_t = 0.5);
 
+void printCarState(const PathPlanner::input& in);
+
+void printPrevPathDetails(const PathPlanner::input& in);
+
+void printNextXY(const PathPlanner::output& out);
 
 #endif  // HELPERS_H

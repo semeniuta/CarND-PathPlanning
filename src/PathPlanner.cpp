@@ -18,12 +18,8 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
 
   PathPlanner::output out{};
 
-  std::cout << "car = [" << in.car_x << ", " << in.car_y << "]\n";
-  std::cout << "speed = " << in.car_speed << "\n";
-  std::cout << "prev_path_size = " << in.previous_path_x.size() << std::endl;
-  if (!in.previous_path_x.empty()) {
-    std::cout << "prev_path_first = [" << in.previous_path_x[0] << ", " << in.previous_path_y[0] << "]\n";
-  }
+  printCarState(in);
+  printPrevPathDetails(in);
 
   int lane = 1;
   double lane_d = 2. + 4. * lane;
@@ -159,12 +155,7 @@ PathPlanner::output FrenetPathPlanner::plan(const PathPlanner::input& in, const 
 
   }
 
-  std::cout << "x = ";
-  printVector(out.next_x_vals);
-
-  std::cout << "y = ";
-  printVector(out.next_y_vals);
-
+  printNextXY(out);
   std::cout << std::endl;
 
   return out;
