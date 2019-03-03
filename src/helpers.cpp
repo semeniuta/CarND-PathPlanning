@@ -314,6 +314,11 @@ vector<double> getXY(double s, double d, const vector<double>& maps_s,
 
 void printVector(const std::vector<double>& vec) {
 
+  if (vec.empty()) {
+    std::cout << "[]\n";
+    return;
+  }
+
   std::cout << "[";
 
   for (unsigned int i = 0; i < vec.size() - 1; i++) {
