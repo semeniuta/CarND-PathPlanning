@@ -79,3 +79,77 @@ std::pair<unsigned int, unsigned int> getSegment(
   return {closest_idx - 1, closest_idx};
 
 }
+
+
+Eigen::MatrixXd createPose(double x, double y, double theta) {
+
+  double ct = cos(theta);
+  double st = sin(theta);
+
+  Eigen::MatrixXd pose{3, 3};
+
+  pose << ct, -st, x,
+          st,  ct, y,
+           0,   0, 1;
+
+  return pose;
+
+}
+
+
+Eigen::MatrixXd invertPose(const Eigen::MatrixXd& pose) {
+
+  Eigen::MatrixXd pose_inv{3, 3};
+
+  double ct = pose(0, 0);
+  double st = pose(1, 0);
+
+  double x = pose(0, 2);
+  double y = pose(1, 2);
+
+  pose_inv << ct, st, -x*ct - y*st,
+             -st, ct,  x*st - y*ct,
+               0,  0,            1;
+
+  return pose_inv;
+
+}
+
+
+// Evaluate a polynomial.
+double polyeval(const Eigen::VectorXd& coeffs, double x) {
+
+  double result = 0.0;
+
+  for (int i = 0; i < coeffs.size(); i++) {
+    result += coeffs[i] * pow(x, i);
+  }
+
+  return result;
+}
+
+
+// Fit a polynomial.
+// Adapted from
+// https://github.com/JuliaMath/Polynomials.jl/blob/master/src/Polynomials.jl#L676-L716
+Eigen::VectorXd polyfit(const Eigen::VectorXd& xvals, const Eigen::VectorXd& yvals, int order) {
+
+  assert(xvals.size() == yvals.size());
+  assert(order >= 1 && order <= xvals.size() - 1);
+  Eigen::MatrixXd A(xvals.size(), order + 1);
+
+  for (int i = 0; i < xvals.size(); i++) {
+    A(i, 0) = 1.0;
+  }
+
+  for (int j = 0; j < xvals.size(); j++) {
+    for (int i = 0; i < order; i++) {
+      A(j, i + 1) = A(j, i) * xvals(j);
+    }
+  }
+
+  auto Q = A.householderQr();
+  auto result = Q.solve(yvals);
+  return result;
+
+}

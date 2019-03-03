@@ -21,4 +21,12 @@ std::pair<unsigned int, unsigned int> getSegment(
     double car_s
 );
 
+Eigen::MatrixXd createPose(double x, double y, double theta);
+
+Eigen::MatrixXd invertPose(const Eigen::MatrixXd& pose);
+
+double polyeval(const Eigen::VectorXd& coeffs, double x);
+
+Eigen::VectorXd polyfit(const Eigen::VectorXd& xvals, const Eigen::VectorXd& yvals, int order);
+
 #endif //PATH_PLANNING_GEOMETRY_H
