@@ -26,43 +26,36 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
 
   auto prev_path_size = in.previous_path_x.size();
 
-  Eigen::VectorXd ref1{3};
-  Eigen::VectorXd ref0{3};
+  Eigen::VectorXd ref_state{3};
   double ref_yaw;
 
   std::vector<Eigen::VectorXd> points;
 
   if (prev_path_size < 2) {
 
-    ref1 << in.car_x,
-            in.car_y,
-                   1;
+    ref_state << in.car_x,
+                 in.car_y,
+                        1;
 
     ref_yaw = deg2rad(in.car_yaw);
 
-    ref0 << ref1(0) - cos(ref_yaw),
-            ref1(1) - sin(ref_yaw),
-                                 1;
-
   } else {
 
-    ref1 << in.previous_path_x[prev_path_size - 1],
-            in.previous_path_y[prev_path_size - 1],
-                                                1;
+    ref_state << in.previous_path_x[prev_path_size - 1],
+                 in.previous_path_y[prev_path_size - 1],
+                                                     1;
 
-    ref0 << in.previous_path_x[prev_path_size - 2],
-            in.previous_path_y[prev_path_size - 2],
-                                                1;
+    double prev_x = in.previous_path_x[prev_path_size - 2];
+    double prev_y = in.previous_path_y[prev_path_size - 2];
 
-    ref_yaw = atan2(ref1(1) - ref0(1), ref1(0) - ref0(0));
+    ref_yaw = atan2(ref_state(1) - prev_y, ref_state(0) - prev_x);
 
   }
 
-  Eigen::MatrixXd ego_pose = createPose(ref1(0), ref1(1), ref_yaw);
+  Eigen::MatrixXd ego_pose = createPose(ref_state(0), ref_state(1), ref_yaw);
   Eigen::MatrixXd to_ego = invertPose(ego_pose);
 
-  //points.push_back(ref0);
-  points.push_back(ref1);
+  points.push_back(ref_state);
 
   std::vector<double> s_increments = {30, 60, 90};
 
