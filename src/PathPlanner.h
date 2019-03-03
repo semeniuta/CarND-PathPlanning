@@ -52,7 +52,15 @@ public:
 };
 
 
-class SimplePathPlanner : public PathPlanner {
+class PolynomialPathPlanner : public PathPlanner {
+
+public:
+
+  PathPlanner::output plan(const PathPlanner::input& in, const map_waypoints& wp) override;
+
+};
+
+class FrenetPathPlanner : public PathPlanner {
 
 public:
 

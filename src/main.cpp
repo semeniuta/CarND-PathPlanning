@@ -17,8 +17,7 @@ int main() {
   map_waypoints wp = readMap(map_file);
 
   uWS::Hub h;
-  SimplePathPlanner planner;
-  //StraightPathPlanner planner;
+  PolynomialPathPlanner planner;
 
   initHub(h, planner, wp);
 
