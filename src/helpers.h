@@ -56,7 +56,7 @@ vector<double> getXY(double s, double d, const vector<double>& maps_s,
 
 void printVector(const std::vector<double>& vec);
 
-std::vector<double> accel(double start_v, double target_v, double accel_t);
+std::vector<double> accel(double start_v, double target_v, double accel_t = 0.5);
 
 
 #endif  // HELPERS_H

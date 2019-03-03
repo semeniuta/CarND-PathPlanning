@@ -330,7 +330,7 @@ void printVector(const std::vector<double>& vec) {
 }
 
 
-std::vector<double> accel(double start_v, double target_v, double accel_t = 0.5) {
+std::vector<double> accel(double start_v, double target_v, double accel_t) {
 
   const int TRAJ_SIZE = 50;
   const double DT = 0.02;
