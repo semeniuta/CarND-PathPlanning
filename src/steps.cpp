@@ -95,11 +95,7 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
 
 }
 
-void fillNextXY(pp_output* out,
-                const pp_input& in,
-                double target_velocity,
-                const ReferencePoses& poses,
-                const Eigen::VectorXd& coeffs) {
+void fillNextXYFromPrevious(pp_output* out, const pp_input& in) {
 
   // Fill the next x/y values with the previous path
 
@@ -116,8 +112,18 @@ void fillNextXY(pp_output* out,
 
   }
 
+}
+
+void fillNextXYTargetV(pp_output* out,
+                       const pp_input& in,
+                       double target_velocity,
+                       const ReferencePoses& poses,
+                       const Eigen::VectorXd& coeffs) {
+
   // Fill the rest of the next x/y values with
   // the values based on the polynomial
+
+  auto prev_path_size = in.previous_path_x.size();
 
   double dx = target_velocity * DT;
   auto n_poly_points = TRAJ_SIZE - prev_path_size;

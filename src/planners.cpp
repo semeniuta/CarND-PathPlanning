@@ -27,8 +27,10 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   ReferencePoses poses = createPoses(ref);
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
 
+  double target_meters_per_second = MPH2Metric(target_velocity_);
   pp_output out{};
-  fillNextXY(&out, in, MPH2Metric(target_velocity_), poses, coeffs);
+  fillNextXYFromPrevious(&out, in);
+  fillNextXYTargetV(&out, in, target_meters_per_second, poses, coeffs);
 
   printNextXY(out);
   std::cout << std::endl;
@@ -50,7 +52,8 @@ pp_output PolynomialPathPlanner::plan(const pp_input& in, const map_waypoints& w
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
 
   pp_output out{};
-  fillNextXY(&out, in, target_velocity, poses, coeffs);
+  fillNextXYFromPrevious(&out, in);
+  fillNextXYTargetV(&out, in, target_velocity, poses, coeffs);
 
   printNextXY(out);
   std::cout << std::endl;
