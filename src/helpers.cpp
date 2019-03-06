@@ -90,17 +90,20 @@ void initHub(uWS::Hub& h,
 
           // Parsing the sensor_fusion JSON
 
-          std::vector<std::vector<double>> sf_data;
+          std::vector<sf_vehicle> sf_data;
 
           for (auto it_vehicle = sensor_fusion.begin(); it_vehicle != sensor_fusion.end(); it_vehicle++) {
 
             auto vehicle_json = *it_vehicle;
 
-            std::vector<double> vehicle;
-
-            for (auto it_num = vehicle_json.begin(); it_num != vehicle_json.end(); it_num++) {
-              vehicle.push_back(*it_num);
-            }
+            sf_vehicle vehicle{};
+            vehicle.id = vehicle_json[0];
+            vehicle.x = vehicle_json[1];
+            vehicle.y = vehicle_json[2];
+            vehicle.vx = vehicle_json[3];
+            vehicle.vy = vehicle_json[4];
+            vehicle.s = vehicle_json[5];
+            vehicle.d = vehicle_json[6];
 
             sf_data.push_back(vehicle);
 
@@ -119,7 +122,7 @@ void initHub(uWS::Hub& h,
             prev_y_data.push_back(*it_num);
           }
 
-          PathPlanner::input in{
+          pp_input in{
               car_x,
               car_y,
               car_s,
@@ -135,7 +138,7 @@ void initHub(uWS::Hub& h,
 
           // Calling the planner
 
-          PathPlanner::output out = planner.plan(in, wp);
+          pp_output out = planner.plan(in, wp);
 
           msgJson["next_x"] = out.next_x_vals;
           msgJson["next_y"] = out.next_y_vals;
@@ -363,7 +366,7 @@ std::vector<double> accel(double start_v, double target_v, double accel_t) {
 
 }
 
-void printCarState(const PathPlanner::input& in) {
+void printCarState(const pp_input& in) {
 
   std::cout << "car_xy = [" << in.car_x << ", " << in.car_y << "]\n";
   std::cout << "car_sd = [" << in.car_s << ", " << in.car_d << "]\n";
@@ -372,7 +375,7 @@ void printCarState(const PathPlanner::input& in) {
 
 }
 
-void printPrevPathDetails(const PathPlanner::input& in) {
+void printPrevPathDetails(const pp_input& in) {
 
   std::cout << "prev_path_size = " << in.previous_path_x.size() << std::endl;
   if (!in.previous_path_x.empty()) {
@@ -381,7 +384,7 @@ void printPrevPathDetails(const PathPlanner::input& in) {
 
 }
 
-void printNextXY(const PathPlanner::output& out) {
+void printNextXY(const pp_output& out) {
 
   std::cout << "x = ";
   printVector(out.next_x_vals);
@@ -401,5 +404,17 @@ double MPH2Metric(double s) {
 double laneD(int lane_index) {
 
   return  2. + 4. * lane_index;
+
+}
+
+int getCarLane(const sf_vehicle& vehicle) {
+
+  if (vehicle.d < 4)
+    return 0;
+
+  if (vehicle.d < 8)
+    return 1;
+
+  return 2;
 
 }

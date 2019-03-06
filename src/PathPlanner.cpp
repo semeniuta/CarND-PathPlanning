@@ -5,13 +5,67 @@
 #include "PathPlanner.h"
 #include <iostream>
 #include <cmath>
-#include "helpers.h"
 #include "Eigen-3.3/Eigen/Dense"
 #include "geometry.h"
 #include "steps.h"
+#include "helpers.h"
 
 
-PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, const map_waypoints& wp) {
+pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints& wp) {
+
+  too_close_ = false;
+
+  double lane_d = laneD(current_lane_);
+
+  printCarState(in);
+  printPrevPathDetails(in);
+
+  for (const sf_vehicle& vehicle : in.sensor_fusion) {
+
+    int v_lane = getCarLane(vehicle);
+
+    if (v_lane == current_lane_ && vehicle.s > in.car_s) {
+
+      double v_dist = vehicle.s - in.car_s;
+
+      if (v_dist < 40) {
+        too_close_ = true;
+      }
+    }
+
+  }
+
+  if (too_close_) {
+
+    target_velocity_ -= 0.2;
+
+    if (target_velocity_ <= 30) {
+      target_velocity_ = 30;
+    }
+
+  } else {
+
+    if (target_velocity_ < MAX_SPEED_MPH) {
+      target_velocity_ += 0.2;
+    }
+
+  }
+
+  ReferenceState ref = prepareReferenceState(in);
+  ReferencePoses poses = createPoses(ref);
+  Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
+
+  pp_output out{};
+  fillNextXY(&out, in, MPH2Metric(target_velocity_), poses, coeffs);
+
+  printNextXY(out);
+  std::cout << std::endl;
+
+  return out;
+
+}
+
+pp_output PolynomialPathPlanner::plan(const pp_input& in, const map_waypoints& wp) {
 
   double target_velocity = MPH2Metric(49.5);
   double lane_d = laneD(1);
@@ -23,7 +77,7 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
   ReferencePoses poses = createPoses(ref);
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
 
-  PathPlanner::output out{};
+  pp_output out{};
   fillNextXY(&out, in, target_velocity, poses, coeffs);
 
   printNextXY(out);
@@ -34,9 +88,9 @@ PathPlanner::output PolynomialPathPlanner::plan(const PathPlanner::input& in, co
 }
 
 
-PathPlanner::output FrenetPathPlanner::plan(const PathPlanner::input& in, const map_waypoints& wp) {
+pp_output FrenetPathPlanner::plan(const pp_input& in, const map_waypoints& wp) {
 
-  PathPlanner::output out{};
+  pp_output out{};
 
   double s = in.car_s;
   double d = in.car_d;
@@ -66,9 +120,9 @@ PathPlanner::output FrenetPathPlanner::plan(const PathPlanner::input& in, const 
 }
 
 
-PathPlanner::output StraightPathPlanner::plan(const PathPlanner::input& in, const map_waypoints& wp) {
+pp_output StraightPathPlanner::plan(const pp_input& in, const map_waypoints& wp) {
 
-  PathPlanner::output out{};
+  pp_output out{};
 
   double s = in.car_s;
   double d = in.car_d;

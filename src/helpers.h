@@ -3,9 +3,9 @@
 
 #include <string>
 #include <vector>
-#include "PathPlanner.h"
 #include "json.hpp"
 #include <uWS/uWS.h>
+#include "types.h"
 
 // for convenience
 using std::string;
@@ -58,14 +58,16 @@ void printVector(const std::vector<double>& vec);
 
 std::vector<double> accel(double start_v, double target_v, double accel_t = 0.5);
 
-void printCarState(const PathPlanner::input& in);
+void printCarState(const pp_input& in);
 
-void printPrevPathDetails(const PathPlanner::input& in);
+void printPrevPathDetails(const pp_input& in);
 
-void printNextXY(const PathPlanner::output& out);
+void printNextXY(const pp_output& out);
 
 double MPH2Metric(double s);
 
 double laneD(int lane_index);
+
+int getCarLane(const sf_vehicle& vehicle);
 
 #endif  // HELPERS_H

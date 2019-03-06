@@ -21,18 +21,18 @@ struct ReferencePoses {
   Eigen::MatrixXd world_in_ego{3, 3};
 };
 
-ReferenceState prepareReferenceState(const PathPlanner::input& in);
+ReferenceState prepareReferenceState(const pp_input& in);
 
 ReferencePoses createPoses(const ReferenceState& ref);
 
-Eigen::VectorXd fitPolynomial(const PathPlanner::input& in,
+Eigen::VectorXd fitPolynomial(const pp_input& in,
                               const map_waypoints& wp,
                               const ReferenceState& ref,
                               const ReferencePoses& poses,
                               double lane_d);
 
-void fillNextXY(PathPlanner::output* out,
-                const PathPlanner::input& in,
+void fillNextXY(pp_output* out,
+                const pp_input& in,
                 double target_velocity,
                 const ReferencePoses& poses,
                 const Eigen::VectorXd& coeffs);
