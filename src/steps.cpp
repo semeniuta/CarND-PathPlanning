@@ -139,3 +139,51 @@ void fillNextXY(pp_output* out,
 
 }
 
+bool checkForCarInFront(const pp_input& in,
+                        int current_lane,
+                        double s_threshold) {
+
+  for (const sf_vehicle& vehicle : in.sensor_fusion) {
+
+    int v_lane = getCarLane(vehicle);
+
+    if (v_lane == current_lane && vehicle.s > in.car_s) {
+
+      double v_dist = vehicle.s - in.car_s;
+
+      if (v_dist < s_threshold) {
+        return true;
+      }
+    }
+
+  }
+
+  return false;
+
+}
+
+double updateTargetVelocity(bool too_close,
+                            double target_velocity,
+                            double velocity_increment,
+                            double min_speed) {
+
+  if (too_close) {
+
+    target_velocity -= velocity_increment;
+
+    if (target_velocity <= min_speed) {
+      target_velocity = min_speed;
+    }
+
+  } else {
+
+    if (target_velocity < MAX_SPEED_MPH) {
+      target_velocity += velocity_increment;
+    }
+
+  }
+
+  return target_velocity;
+
+}
+

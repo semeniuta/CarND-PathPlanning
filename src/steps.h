@@ -37,4 +37,11 @@ void fillNextXY(pp_output* out,
                 const ReferencePoses& poses,
                 const Eigen::VectorXd& coeffs);
 
+bool checkForCarInFront(const pp_input& in, int current_lane, double s_threshold);
+
+double updateTargetVelocity(bool too_close,
+                            double target_velocity,
+                            double velocity_increment,
+                            double min_speed);
+
 #endif //PATH_PLANNING_STEPS_H

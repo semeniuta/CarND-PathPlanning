@@ -20,36 +20,8 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   printCarState(in);
   printPrevPathDetails(in);
 
-  for (const sf_vehicle& vehicle : in.sensor_fusion) {
-
-    int v_lane = getCarLane(vehicle);
-
-    if (v_lane == current_lane_ && vehicle.s > in.car_s) {
-
-      double v_dist = vehicle.s - in.car_s;
-
-      if (v_dist < 40) {
-        too_close_ = true;
-      }
-    }
-
-  }
-
-  if (too_close_) {
-
-    target_velocity_ -= 0.2;
-
-    if (target_velocity_ <= 30) {
-      target_velocity_ = 30;
-    }
-
-  } else {
-
-    if (target_velocity_ < MAX_SPEED_MPH) {
-      target_velocity_ += 0.2;
-    }
-
-  }
+  too_close_ = checkForCarInFront(in, current_lane_, 40);
+  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.2, 30);
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
