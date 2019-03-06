@@ -6,7 +6,7 @@
 #define PATH_PLANNING_GEOMETRY_H
 
 #include "Eigen-3.3/Eigen/Dense"
-#include "PathPlanner.h"
+#include "planners.h"
 
 // The max s value before wrapping around the track back to 0
 const double MAX_S = 6945.554;

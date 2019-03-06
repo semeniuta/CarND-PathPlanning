@@ -6,7 +6,7 @@
 #define PATH_PLANNING_STEPS_H
 
 #include "Eigen-3.3/Eigen/Dense"
-#include "PathPlanner.h"
+#include "planners.h"
 
 const int TRAJ_SIZE = 50;
 const double DT = 0.02;

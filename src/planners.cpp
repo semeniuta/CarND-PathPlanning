@@ -2,7 +2,7 @@
 // Created by Oleksandr Semeniuta on 2019-03-03.
 //
 
-#include "PathPlanner.h"
+#include "planners.h"
 #include <iostream>
 #include <cmath>
 #include "Eigen-3.3/Eigen/Dense"

@@ -2,7 +2,7 @@
 // Created by Oleksandr Semeniuta on 2019-03-02.
 //
 
-#include "PathPlanner.h"
+#include "planners.h"
 #include <iostream>
 #include "helpers.h"
 
