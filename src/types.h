@@ -30,6 +30,10 @@ struct vehicle_info {
   int lane;
 };
 
+enum class ego_state {
+  start, keep_lane, prepare_to_change_lane, change_lane,
+};
+
 struct pp_input {
 
   double car_x;

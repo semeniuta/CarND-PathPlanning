@@ -16,42 +16,67 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   printCarState(in);
   printPrevPathDetails(in);
 
+  pp_output out{};
+
   too_close_ = checkForCarInFront(in, current_lane_, 40);
   target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.2, 30);
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
 
-  auto vehiles_info = lookAround(in);
-  if (too_close_) {
-
-    auto neighbor_lanes = neighbors(current_lane_);
-
-    for (int candidate_lane : neighbor_lanes) {
-      if (safeInLane(candidate_lane, vehiles_info)) {
-        current_lane_ = candidate_lane;
-      }
-    }
-
-  }
-
   double lane_d = laneD(current_lane_);
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
 
-  pp_output out{};
+  switch (state_) {
 
-  if (start_) {
+    case ego_state::start: {
 
-    double accel_to_mph = 20;
-    fillNextNYFirstTime(&out, accel_to_mph, poses, coeffs);
+      double accel_to_mph = 20;
+      fillNextNYFirstTime(&out, accel_to_mph, poses, coeffs);
 
-    start_ = false;
-    target_velocity_ = accel_to_mph + 1;
+      start_ = false;
+      target_velocity_ = accel_to_mph + 1;
 
-  } else {
+      state_ = ego_state::keep_lane;
 
-    fillNextXYFromPrevious(&out, in);
-    fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+    }; break;
+
+    case ego_state::keep_lane: {
+
+      if (too_close_) {
+        state_ = ego_state::prepare_to_change_lane;
+      }
+
+      fillNextXYFromPrevious(&out, in);
+      fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+
+    } break;
+
+    case ego_state::prepare_to_change_lane: {
+
+      auto vehiles_info = lookAround(in);
+      auto neighbor_lanes = neighbors(current_lane_);
+
+      for (int candidate_lane : neighbor_lanes) {
+        if (safeInLane(candidate_lane, vehiles_info)) {
+          current_lane_ = candidate_lane;
+          state_ = ego_state::change_lane;
+          break;
+        }
+      }
+
+      fillNextXYFromPrevious(&out, in);
+      fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+
+    } break;
+
+    case ego_state::change_lane: {
+
+      // temporarily
+      fillNextXYFromPrevious(&out, in);
+      state_ = ego_state::keep_lane;
+
+    } break;
 
   }
 
