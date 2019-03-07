@@ -19,7 +19,7 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   pp_output out{};
 
   too_close_ = checkForCarInFront(in, current_lane_, 40);
-  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.2, 30);
+  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.15, 30);
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
@@ -54,27 +54,50 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
     case ego_state::prepare_to_change_lane: {
 
-      auto vehiles_info = lookAround(in);
-      auto neighbor_lanes = neighbors(current_lane_);
+      if (!too_close_) {
 
-      for (int candidate_lane : neighbor_lanes) {
-        if (safeInLane(candidate_lane, vehiles_info)) {
-          current_lane_ = candidate_lane;
-          state_ = ego_state::change_lane;
-          break;
+        fillNextXYFromPrevious(&out, in);
+        state_ = ego_state::keep_lane;
+
+      } else {
+
+        auto vehiles_info = lookAround(in);
+        auto neighbor_lanes = neighbors(current_lane_);
+
+        for (int candidate_lane : neighbor_lanes) {
+          if (safeInLane(candidate_lane, vehiles_info)) {
+
+            current_lane_ = candidate_lane;
+            state_ = ego_state::change_lane;
+
+            break;
+          }
         }
-      }
 
-      fillNextXYFromPrevious(&out, in);
-      fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+        fillNextXYFromPrevious(&out, in);
+        fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+
+      }
 
     } break;
 
     case ego_state::change_lane: {
 
-      // temporarily
+//      ref = prepareReferenceState(in, true);
+//      poses = createPoses(ref);
+//      lane_d = laneD(current_lane_);
+//      coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
+
       fillNextXYFromPrevious(&out, in);
-      state_ = ego_state::keep_lane;
+      fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+
+      if (fabs(in.car_d - lane_d) < 0.001) {
+        state_ = ego_state::keep_lane;
+      }
+
+      // temporarily
+      //fillNextXYFromPrevious(&out, in);
+      //state_ = ego_state::keep_lane;
 
     } break;
 
