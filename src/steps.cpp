@@ -7,7 +7,7 @@
 #include "helpers.h"
 #include "geometry.h"
 
-ReferenceState prepareReferenceState(const pp_input& in) {
+ReferenceState prepareReferenceState(const pp_input& in, bool use_car) {
 
   // Prepare the reference state
 
@@ -17,7 +17,7 @@ ReferenceState prepareReferenceState(const pp_input& in) {
 
   std::vector<Eigen::VectorXd> points;
 
-  if (prev_path_size < 2) {
+  if (prev_path_size < 2 || use_car) {
 
     ref.xy_h << in.car_x,
         in.car_y,
@@ -95,15 +95,19 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
 
 }
 
-void fillNextXYFromPrevious(pp_output* out, const pp_input& in) {
+void fillNextXYFromPrevious(pp_output* out, const pp_input& in, unsigned long n_take) {
 
   // Fill the next x/y values with the previous path
 
   auto prev_path_size = in.previous_path_x.size();
 
+  if (n_take == -1 || n_take > prev_path_size) { // Take all
+    n_take = prev_path_size;
+  }
+
   if (!in.previous_path_x.empty()) {
 
-    for (unsigned i = 0; i < prev_path_size; i++) {
+    for (unsigned i = 0; i < n_take; i++) {
 
       out->next_x_vals.push_back(in.previous_path_x[i]);
       out->next_y_vals.push_back(in.previous_path_y[i]);

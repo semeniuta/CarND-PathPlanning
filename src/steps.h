@@ -21,7 +21,7 @@ struct ReferencePoses {
   Eigen::MatrixXd world_in_ego{3, 3};
 };
 
-ReferenceState prepareReferenceState(const pp_input& in);
+ReferenceState prepareReferenceState(const pp_input& in, bool use_car = false);
 
 ReferencePoses createPoses(const ReferenceState& ref);
 
@@ -42,7 +42,7 @@ void fillNextNYFirstTime(pp_output* out,
                          const ReferencePoses& poses,
                          const Eigen::VectorXd& coeffs);
 
-void fillNextXYFromPrevious(pp_output* out, const pp_input& in);
+void fillNextXYFromPrevious(pp_output* out, const pp_input& in, unsigned long n_take = -1);
 
 bool checkForCarInFront(const pp_input& in, int current_lane, double s_threshold);
 
