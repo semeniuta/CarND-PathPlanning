@@ -70,4 +70,8 @@ double laneD(int lane_index);
 
 int getCarLane(const sf_vehicle& vehicle);
 
+std::vector<int> neighbors(int lane);
+
+bool safeInLane(int lane, const std::vector<vehicle_info>& vehiles_info);
+
 #endif  // HELPERS_H

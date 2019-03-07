@@ -51,4 +51,6 @@ double updateTargetVelocity(bool too_close,
                             double velocity_increment,
                             double min_speed);
 
+std::vector<vehicle_info> lookAround(const pp_input& in);
+
 #endif //PATH_PLANNING_STEPS_H

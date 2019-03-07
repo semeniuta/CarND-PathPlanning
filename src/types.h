@@ -24,6 +24,12 @@ struct sf_vehicle {
   double d;
 };
 
+struct vehicle_info {
+  int id;
+  double s_dist;
+  int lane;
+};
+
 struct pp_input {
 
   double car_x;

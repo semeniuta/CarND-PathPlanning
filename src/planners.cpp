@@ -22,6 +22,19 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
 
+  auto vehiles_info = lookAround(in);
+  if (too_close_) {
+
+    auto neighbor_lanes = neighbors(current_lane_);
+
+    for (int candidate_lane : neighbor_lanes) {
+      if (safeInLane(candidate_lane, vehiles_info)) {
+        current_lane_ = candidate_lane;
+      }
+    }
+
+  }
+
   double lane_d = laneD(current_lane_);
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
 

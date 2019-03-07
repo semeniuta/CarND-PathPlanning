@@ -195,6 +195,24 @@ bool checkForCarInFront(const pp_input& in,
 
 }
 
+std::vector<vehicle_info> lookAround(const pp_input& in) {
+
+  std::vector<vehicle_info> res{};
+
+  for (const sf_vehicle& vehicle : in.sensor_fusion) {
+
+    vehicle_info info{};
+
+    info.id = vehicle.id;
+    info.lane = getCarLane(vehicle);
+    info.s_dist = vehicle.s - in.car_s;
+
+    res.push_back(info);
+  }
+
+  return res;
+}
+
 double updateTargetVelocity(bool too_close,
                             double target_velocity,
                             double velocity_increment,

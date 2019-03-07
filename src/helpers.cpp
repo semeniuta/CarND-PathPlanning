@@ -418,3 +418,26 @@ int getCarLane(const sf_vehicle& vehicle) {
   return 2;
 
 }
+
+std::vector<int> neighbors(int lane) {
+
+  if (lane == 0 || lane == 2)
+    return {1};
+
+  return {0, 2};
+
+}
+
+bool safeInLane(int lane, const std::vector<vehicle_info>& vehiles_info) {
+
+  for (const auto& info : vehiles_info) {
+
+    if (info.lane == lane && fabs(info.s_dist) < 20) {
+        return false;
+    }
+
+  }
+
+  return true;
+
+}
