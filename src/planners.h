@@ -29,6 +29,7 @@ private:
   int current_lane_{1};
   bool too_close_{false};
   double target_velocity_{MAX_SPEED_MPH};
+  bool start_{true};
 
 
 };

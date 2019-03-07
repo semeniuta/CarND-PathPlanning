@@ -37,6 +37,11 @@ void fillNextXYTargetV(pp_output* out,
                        const ReferencePoses& poses,
                        const Eigen::VectorXd& coeffs);
 
+void fillNextNYFirstTime(pp_output* out,
+                         double accel_to_mph,
+                         const ReferencePoses& poses,
+                         const Eigen::VectorXd& coeffs);
+
 void fillNextXYFromPrevious(pp_output* out, const pp_input& in);
 
 bool checkForCarInFront(const pp_input& in, int current_lane, double s_threshold);

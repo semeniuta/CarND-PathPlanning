@@ -12,5 +12,7 @@ int main() {
 
   printVector( accel(26, 25) );
 
+  printVector( accel(20, 25) );
+
 
 }

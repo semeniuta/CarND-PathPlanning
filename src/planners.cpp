@@ -29,8 +29,21 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
   double target_meters_per_second = MPH2Metric(target_velocity_);
   pp_output out{};
-  fillNextXYFromPrevious(&out, in);
-  fillNextXYTargetV(&out, in, target_meters_per_second, poses, coeffs);
+
+  if (start_) {
+
+    double accel_to_mph = 20;
+    fillNextNYFirstTime(&out, accel_to_mph, poses, coeffs);
+
+    start_ = false;
+    target_velocity_ = accel_to_mph + 1;
+
+  } else {
+
+    fillNextXYFromPrevious(&out, in);
+    fillNextXYTargetV(&out, in, target_meters_per_second, poses, coeffs);
+
+  }
 
   printNextXY(out);
   std::cout << std::endl;

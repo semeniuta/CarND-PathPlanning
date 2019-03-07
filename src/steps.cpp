@@ -145,6 +145,32 @@ void fillNextXYTargetV(pp_output* out,
 
 }
 
+void fillNextNYFirstTime(pp_output* out,
+                         double accel_to_mph,
+                         const ReferencePoses& poses,
+                         const Eigen::VectorXd& coeffs) {
+
+  auto accel_increments = accel(0, MPH2Metric(accel_to_mph), 1.);
+
+  double x = 0.;
+  for (double dx : accel_increments) {
+
+    x += dx;
+
+    double y = polyeval(coeffs, x);
+
+    Eigen::VectorXd p{3};
+    p << x, y, 1;
+
+    Eigen::VectorXd p_world = poses.ego_in_world * p;
+
+    out->next_x_vals.push_back(p_world(0) / p_world(2));
+    out->next_y_vals.push_back(p_world(1) / p_world(2));
+
+  }
+
+}
+
 bool checkForCarInFront(const pp_input& in,
                         int current_lane,
                         double s_threshold) {
