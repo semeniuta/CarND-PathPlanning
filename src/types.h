@@ -34,6 +34,11 @@ enum class ego_state {
   start, keep_lane, prepare_to_change_lane, change_lane,
 };
 
+struct frenet_coord {
+  double s;
+  double d;
+};
+
 struct pp_input {
 
   double car_x;

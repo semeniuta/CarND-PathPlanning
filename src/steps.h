@@ -31,6 +31,12 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
                               const ReferencePoses& poses,
                               double lane_d);
 
+Eigen::VectorXd fitPolynomial(const pp_input& in,
+                              const map_waypoints& wp,
+                              const ReferenceState& ref,
+                              const std::vector<frenet_coord>& next_frenet_points,
+                              const ReferencePoses& poses);
+
 void fillNextXYTargetV(pp_output* out,
                        const pp_input& in,
                        double target_velocity_mph,
@@ -42,7 +48,7 @@ void fillNextNYFirstTime(pp_output* out,
                          const ReferencePoses& poses,
                          const Eigen::VectorXd& coeffs);
 
-void fillNextXYFromPrevious(pp_output* out, const pp_input& in, unsigned long n_take = -1);
+void fillNextXYFromPrevious(pp_output* out, const pp_input& in, long n_take = -1);
 
 bool checkForCarInFront(const pp_input& in, int current_lane, double s_threshold);
 

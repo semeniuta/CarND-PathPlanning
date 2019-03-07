@@ -25,7 +25,13 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   ReferencePoses poses = createPoses(ref);
 
   double lane_d = laneD(current_lane_);
-  Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
+  std::vector<frenet_coord> next_frenet_points = {
+      {30, lane_d},
+      {60, lane_d},
+      {90, lane_d}
+  };
+
+  Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, next_frenet_points, poses);
 
   switch (state_) {
 
@@ -113,7 +119,14 @@ pp_output PolynomialPathPlanner::plan(const pp_input& in, const map_waypoints& w
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
-  Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
+
+  std::vector<frenet_coord> next_frenet_points = {
+      {30, lane_d},
+      {60, lane_d},
+      {90, lane_d}
+  };
+
+  Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, next_frenet_points, poses);
 
   pp_output out{};
   fillNextXYFromPrevious(&out, in);

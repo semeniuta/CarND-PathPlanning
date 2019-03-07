@@ -58,18 +58,15 @@ ReferencePoses createPoses(const ReferenceState& ref) {
 Eigen::VectorXd fitPolynomial(const pp_input& in,
                               const map_waypoints& wp,
                               const ReferenceState& ref,
-                              const ReferencePoses& poses,
-                              double lane_d) {
-  // Fit polynomial
+                              const std::vector<frenet_coord>& next_frenet_points,
+                              const ReferencePoses& poses) {
 
   std::vector<Eigen::VectorXd> points;
   points.push_back(ref.xy_h);
 
-  std::vector<double> s_increments = {30, 60, 90};
+  for (const frenet_coord& fp : next_frenet_points) {
 
-  for (double s_inc : s_increments) {
-
-    auto xy = getXY(in.car_s + s_inc, lane_d, wp.s, wp.x, wp.y);
+    auto xy = getXY(in.car_s + fp.s, fp.d, wp.s, wp.x, wp.y);
     Eigen::VectorXd p{3};
     p << xy[0], xy[1], 1;
 
@@ -95,7 +92,7 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
 
 }
 
-void fillNextXYFromPrevious(pp_output* out, const pp_input& in, unsigned long n_take) {
+void fillNextXYFromPrevious(pp_output* out, const pp_input& in, long n_take) {
 
   // Fill the next x/y values with the previous path
 
