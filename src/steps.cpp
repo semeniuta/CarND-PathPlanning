@@ -116,7 +116,7 @@ void fillNextXYFromPrevious(pp_output* out, const pp_input& in) {
 
 void fillNextXYTargetV(pp_output* out,
                        const pp_input& in,
-                       double target_velocity,
+                       double target_velocity_mph,
                        const ReferencePoses& poses,
                        const Eigen::VectorXd& coeffs) {
 
@@ -125,6 +125,7 @@ void fillNextXYTargetV(pp_output* out,
 
   auto prev_path_size = in.previous_path_x.size();
 
+  double target_velocity = MPH2Metric(target_velocity_mph);
   double dx = target_velocity * DT;
   auto n_poly_points = TRAJ_SIZE - prev_path_size;
 

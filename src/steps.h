@@ -33,7 +33,7 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
 
 void fillNextXYTargetV(pp_output* out,
                        const pp_input& in,
-                       double target_velocity,
+                       double target_velocity_mph,
                        const ReferencePoses& poses,
                        const Eigen::VectorXd& coeffs);
 

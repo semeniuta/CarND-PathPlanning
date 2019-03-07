@@ -13,10 +13,6 @@
 
 pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints& wp) {
 
-  too_close_ = false;
-
-  double lane_d = laneD(current_lane_);
-
   printCarState(in);
   printPrevPathDetails(in);
 
@@ -25,9 +21,10 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
+
+  double lane_d = laneD(current_lane_);
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
 
-  double target_meters_per_second = MPH2Metric(target_velocity_);
   pp_output out{};
 
   if (start_) {
@@ -41,7 +38,7 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   } else {
 
     fillNextXYFromPrevious(&out, in);
-    fillNextXYTargetV(&out, in, target_meters_per_second, poses, coeffs);
+    fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
 
   }
 
@@ -54,7 +51,7 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
 pp_output PolynomialPathPlanner::plan(const pp_input& in, const map_waypoints& wp) {
 
-  double target_velocity = MPH2Metric(49.5);
+  double target_velocity = 49.5;
   double lane_d = laneD(1);
 
   printCarState(in);
