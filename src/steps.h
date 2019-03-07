@@ -53,4 +53,6 @@ double updateTargetVelocity(bool too_close,
 
 std::vector<vehicle_info> lookAround(const pp_input& in);
 
+int checkIfSafeToChangeLane(const pp_input& in, int current_lane);
+
 #endif //PATH_PLANNING_STEPS_H

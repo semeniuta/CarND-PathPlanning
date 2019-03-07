@@ -61,17 +61,10 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
       } else {
 
-        auto vehiles_info = lookAround(in);
-        auto neighbor_lanes = neighbors(current_lane_);
-
-        for (int candidate_lane : neighbor_lanes) {
-          if (safeInLane(candidate_lane, vehiles_info)) {
-
-            current_lane_ = candidate_lane;
-            state_ = ego_state::change_lane;
-
-            break;
-          }
+        int new_lane = checkIfSafeToChangeLane(in, current_lane_);
+        if (new_lane != -1) {
+          current_lane_ = new_lane;
+          state_ = ego_state::change_lane;
         }
 
         fillNextXYFromPrevious(&out, in);

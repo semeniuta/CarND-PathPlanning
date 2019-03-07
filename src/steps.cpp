@@ -242,3 +242,21 @@ double updateTargetVelocity(bool too_close,
 
 }
 
+int checkIfSafeToChangeLane(const pp_input& in, int current_lane) {
+  // If safe, return index of the lane
+  // otherwise, return -1
+
+  auto vehiles_info = lookAround(in);
+  auto neighbor_lanes = neighbors(current_lane);
+
+  for (int candidate_lane : neighbor_lanes) {
+
+    if (safeInLane(candidate_lane, vehiles_info))
+      return candidate_lane;
+
+  }
+
+  return -1;
+
+}
+
