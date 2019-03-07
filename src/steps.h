@@ -21,7 +21,7 @@ struct ReferencePoses {
   Eigen::MatrixXd world_in_ego{3, 3};
 };
 
-ReferenceState prepareReferenceState(const pp_input& in, bool use_car = false);
+ReferenceState prepareReferenceState(const pp_input& in, long index = -1);
 
 ReferencePoses createPoses(const ReferenceState& ref);
 

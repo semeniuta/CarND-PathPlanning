@@ -18,17 +18,18 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
   pp_output out{};
 
-  too_close_ = checkForCarInFront(in, current_lane_, 40);
+  too_close_ = checkForCarInFront(in, target_lane_, 40);
   target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.15, 30);
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
 
-  double lane_d = laneD(current_lane_);
+  double lane_d = laneD(target_lane_);
+  double lane_d_0 = laneD(source_lane_); // TODO Put in use
   std::vector<frenet_coord> next_frenet_points = {
       {30, lane_d},
       {60, lane_d},
-      {90, lane_d}
+      {90, lane_d},
   };
 
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, next_frenet_points, poses);
@@ -67,9 +68,10 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
       } else {
 
-        int new_lane = checkIfSafeToChangeLane(in, current_lane_);
+        int new_lane = checkIfSafeToChangeLane(in, target_lane_);
         if (new_lane != -1) {
-          current_lane_ = new_lane;
+          source_lane_ = target_lane_;
+          target_lane_ = new_lane;
           state_ = ego_state::change_lane;
         }
 
@@ -82,21 +84,29 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
     case ego_state::change_lane: {
 
-//      ref = prepareReferenceState(in, true);
-//      poses = createPoses(ref);
-//      lane_d = laneD(current_lane_);
-//      coeffs = fitPolynomial(in, wp, ref, poses, lane_d);
+//      ReferenceState ref_car_itself = prepareReferenceState(in, 10);
+//      ReferencePoses poses_cl = createPoses(ref_car_itself);
+//      double lane_d_0 = laneD(prev_lane_);
+//      double lane_d_1 = laneD(current_lane_);
+//
+//      std::vector<frenet_coord> next_frenet_points_cl = {
+//          {30, lane_d_0},
+//          {60, lane_d_1},
+//          {90, lane_d_1}
+//      };
+//
+//      Eigen::VectorXd coeffs_cl = fitPolynomial(in, wp, ref_car_itself, next_frenet_points_cl, poses_cl);
+//
+//      fillNextXYFromPrevious(&out, in, 9);
+//      fillNextXYTargetV(&out, in, target_velocity_, poses_cl, coeffs_cl);
 
       fillNextXYFromPrevious(&out, in);
       fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
 
       if (fabs(in.car_d - lane_d) < 0.001) {
+        source_lane_ = target_lane_;
         state_ = ego_state::keep_lane;
       }
-
-      // temporarily
-      //fillNextXYFromPrevious(&out, in);
-      //state_ = ego_state::keep_lane;
 
     } break;
 

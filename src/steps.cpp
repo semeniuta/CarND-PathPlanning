@@ -7,17 +7,20 @@
 #include "helpers.h"
 #include "geometry.h"
 
-ReferenceState prepareReferenceState(const pp_input& in, bool use_car) {
+ReferenceState prepareReferenceState(const pp_input& in, long index) {
 
   // Prepare the reference state
 
   ReferenceState ref{};
 
   auto prev_path_size = in.previous_path_x.size();
+  if (index == -1) {
+    index = prev_path_size - 1;
+  }
 
   std::vector<Eigen::VectorXd> points;
 
-  if (prev_path_size < 2 || use_car) {
+  if (prev_path_size < 2) {
 
     ref.xy_h << in.car_x,
         in.car_y,
@@ -27,12 +30,12 @@ ReferenceState prepareReferenceState(const pp_input& in, bool use_car) {
 
   } else {
 
-    ref.xy_h << in.previous_path_x[prev_path_size - 1],
+    ref.xy_h << in.previous_path_x[index],
         in.previous_path_y[prev_path_size - 1],
         1;
 
-    double prev_x = in.previous_path_x[prev_path_size - 2];
-    double prev_y = in.previous_path_y[prev_path_size - 2];
+    double prev_x = in.previous_path_x[index - 1];
+    double prev_y = in.previous_path_y[index - 1];
 
     ref.yaw = atan2(ref.xy_h(1) - prev_y, ref.xy_h(0) - prev_x);
 
@@ -124,7 +127,8 @@ void fillNextXYTargetV(pp_output* out,
   // Fill the rest of the next x/y values with
   // the values based on the polynomial
 
-  auto prev_path_size = in.previous_path_x.size();
+  //auto prev_path_size = in.previous_path_x.size();
+  auto prev_path_size = out->next_x_vals.size();
 
   double target_velocity = MPH2Metric(target_velocity_mph);
   double dx = target_velocity * DT;
