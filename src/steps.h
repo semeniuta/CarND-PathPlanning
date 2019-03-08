@@ -14,6 +14,15 @@ const double DT = 0.02;
 struct ReferenceState {
   Eigen::VectorXd xy_h{3};
   double yaw;
+
+  double getX() const {
+    return xy_h(0) / xy_h(2);
+  }
+
+  double getY() const {
+    return xy_h(1) / xy_h(2);
+  }
+
 };
 
 struct ReferencePoses {

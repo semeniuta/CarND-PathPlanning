@@ -67,9 +67,13 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
   std::vector<Eigen::VectorXd> points;
   points.push_back(ref.xy_h);
 
+  auto ref_frenet = getFrenet(ref.getX(), ref.getY(), ref.yaw, wp.x, wp.y);
+  double ref_s = ref_frenet[0];
+
   for (const frenet_coord& fp : next_frenet_points) {
 
-    auto xy = getXY(in.car_s + fp.s, fp.d, wp.s, wp.x, wp.y);
+    //auto xy = getXY(in.car_s + fp.s, fp.d, wp.s, wp.x, wp.y);
+    auto xy = getXY(ref_s + fp.s, fp.d, wp.s, wp.x, wp.y);
     Eigen::VectorXd p{3};
     p << xy[0], xy[1], 1;
 
