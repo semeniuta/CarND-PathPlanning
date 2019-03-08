@@ -62,18 +62,26 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
                               const map_waypoints& wp,
                               const ReferenceState& ref,
                               const std::vector<frenet_coord>& next_frenet_points,
-                              const ReferencePoses& poses) {
+                              const ReferencePoses& poses,
+                              bool use_car) {
+
+  // when use_car is false,
+  // start with ref as the first anchor point
+  // otherwise, use car's current position
 
   std::vector<Eigen::VectorXd> points;
   points.push_back(ref.xy_h);
 
-  auto ref_frenet = getFrenet(ref.getX(), ref.getY(), ref.yaw, wp.x, wp.y);
-  double ref_s = ref_frenet[0];
+  double start_s = in.car_s;
+  if (!use_car) {
+    auto ref_frenet = getFrenet(ref.getX(), ref.getY(), ref.yaw, wp.x, wp.y);
+    start_s = ref_frenet[0];
+  }
 
   for (const frenet_coord& fp : next_frenet_points) {
 
-    //auto xy = getXY(in.car_s + fp.s, fp.d, wp.s, wp.x, wp.y);
-    auto xy = getXY(ref_s + fp.s, fp.d, wp.s, wp.x, wp.y);
+    auto xy = getXY(start_s + fp.s, fp.d, wp.s, wp.x, wp.y);
+
     Eigen::VectorXd p{3};
     p << xy[0], xy[1], 1;
 
@@ -158,9 +166,10 @@ void fillNextXYTargetV(pp_output* out,
 void fillNextNYFirstTime(pp_output* out,
                          double accel_to_mph,
                          const ReferencePoses& poses,
-                         const Eigen::VectorXd& coeffs) {
+                         const Eigen::VectorXd& coeffs,
+                         double accel_from_mph) {
 
-  auto accel_increments = accel(0, MPH2Metric(accel_to_mph), 1.);
+  auto accel_increments = accel(MPH2Metric(accel_from_mph), MPH2Metric(accel_to_mph), 1.);
 
   double x = 0.;
   for (double dx : accel_increments) {

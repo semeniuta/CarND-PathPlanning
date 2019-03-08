@@ -44,7 +44,8 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
                               const map_waypoints& wp,
                               const ReferenceState& ref,
                               const std::vector<frenet_coord>& next_frenet_points,
-                              const ReferencePoses& poses);
+                              const ReferencePoses& poses,
+                              bool use_car = true);
 
 void fillNextXYTargetV(pp_output* out,
                        const pp_input& in,
@@ -55,7 +56,8 @@ void fillNextXYTargetV(pp_output* out,
 void fillNextNYFirstTime(pp_output* out,
                          double accel_to_mph,
                          const ReferencePoses& poses,
-                         const Eigen::VectorXd& coeffs);
+                         const Eigen::VectorXd& coeffs,
+                         double accel_from_mph = 0.);
 
 void fillNextXYFromPrevious(pp_output* out, const pp_input& in, long n_take = -1);
 
