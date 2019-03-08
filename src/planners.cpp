@@ -25,7 +25,7 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   ReferencePoses poses = createPoses(ref);
 
   double lane_d = laneD(target_lane_);
-  double lane_d_0 = laneD(source_lane_); // TODO Put in use
+  //double lane_d_0 = laneD(source_lane_); // TODO Put in use
   std::vector<frenet_coord> next_frenet_points = {
       {30, lane_d},
       {60, lane_d},
@@ -63,10 +63,9 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
     case ego_state::prepare_to_change_lane: {
 
-      fillNextXYFromPrevious(&out, in);
-
       if (!too_close_) {
 
+        fillNextXYFromPrevious(&out, in);
         state_ = ego_state::keep_lane;
 
       } else {
@@ -77,10 +76,15 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
           source_lane_ = target_lane_;
           target_lane_ = new_lane;
+
+          fillNextXYFromPrevious(&out, in, 5);
+          // TODO Implement a better way to initiate lane change
+
           state_ = ego_state::change_lane;
 
         } else {
 
+          fillNextXYFromPrevious(&out, in);
           fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
 
         }
