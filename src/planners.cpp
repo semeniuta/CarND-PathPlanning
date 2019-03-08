@@ -46,7 +46,8 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
       state_ = ego_state::keep_lane;
 
-    }; break;
+    }
+    break;
 
     case ego_state::keep_lane: {
 
@@ -57,48 +58,39 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
       fillNextXYFromPrevious(&out, in);
       fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
 
-    } break;
+    }
+    break;
 
     case ego_state::prepare_to_change_lane: {
 
+      fillNextXYFromPrevious(&out, in);
+
       if (!too_close_) {
 
-        fillNextXYFromPrevious(&out, in);
         state_ = ego_state::keep_lane;
 
       } else {
 
         int new_lane = checkIfSafeToChangeLane(in, target_lane_);
-        if (new_lane != -1) {
+        bool safe_to_change_lane = (new_lane != -1);
+        if (safe_to_change_lane) {
+
           source_lane_ = target_lane_;
           target_lane_ = new_lane;
           state_ = ego_state::change_lane;
-        }
 
-        fillNextXYFromPrevious(&out, in);
-        fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+        } else {
+
+          fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
+
+        }
 
       }
 
-    } break;
+    }
+    break;
 
     case ego_state::change_lane: {
-
-//      ReferenceState ref_car_itself = prepareReferenceState(in, 10);
-//      ReferencePoses poses_cl = createPoses(ref_car_itself);
-//      double lane_d_0 = laneD(prev_lane_);
-//      double lane_d_1 = laneD(current_lane_);
-//
-//      std::vector<frenet_coord> next_frenet_points_cl = {
-//          {30, lane_d_0},
-//          {60, lane_d_1},
-//          {90, lane_d_1}
-//      };
-//
-//      Eigen::VectorXd coeffs_cl = fitPolynomial(in, wp, ref_car_itself, next_frenet_points_cl, poses_cl);
-//
-//      fillNextXYFromPrevious(&out, in, 9);
-//      fillNextXYTargetV(&out, in, target_velocity_, poses_cl, coeffs_cl);
 
       fillNextXYFromPrevious(&out, in);
       fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
@@ -108,7 +100,8 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
         state_ = ego_state::keep_lane;
       }
 
-    } break;
+    }
+    break;
 
   }
 
