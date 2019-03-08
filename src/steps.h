@@ -16,11 +16,11 @@ struct ReferenceState {
   double yaw;
 
   double getX() const {
-    return xy_h(0) / xy_h(2);
+    return getXFromH(xy_h);
   }
 
   double getY() const {
-    return xy_h(1) / xy_h(2);
+    return getYFromH(xy_h);
   }
 
 };

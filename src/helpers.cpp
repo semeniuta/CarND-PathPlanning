@@ -441,3 +441,15 @@ bool safeInLane(int lane, const std::vector<vehicle_info>& vehiles_info) {
   return true;
 
 }
+
+double getXFromH(const Eigen::VectorXd& vec_h) {
+
+  return vec_h(0) / vec_h(2);
+
+}
+
+double getYFromH(const Eigen::VectorXd& vec_h) {
+
+  return vec_h(1) / vec_h(2);
+
+}

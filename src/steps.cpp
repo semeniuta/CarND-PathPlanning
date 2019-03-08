@@ -174,8 +174,8 @@ void fillNextNYFirstTime(pp_output* out,
 
     Eigen::VectorXd p_world = poses.ego_in_world * p;
 
-    out->next_x_vals.push_back(p_world(0) / p_world(2));
-    out->next_y_vals.push_back(p_world(1) / p_world(2));
+    out->next_x_vals.push_back(getXFromH(p_world));
+    out->next_y_vals.push_back(getYFromH(p_world));
 
   }
 

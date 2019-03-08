@@ -6,6 +6,7 @@
 #include "json.hpp"
 #include <uWS/uWS.h>
 #include "types.h"
+#include "Eigen-3.3/Eigen/Dense"
 
 // for convenience
 using std::string;
@@ -73,5 +74,9 @@ int getCarLane(const sf_vehicle& vehicle);
 std::vector<int> neighbors(int lane);
 
 bool safeInLane(int lane, const std::vector<vehicle_info>& vehiles_info);
+
+double getXFromH(const Eigen::VectorXd& vec_h);
+
+double getYFromH(const Eigen::VectorXd& vec_h);
 
 #endif  // HELPERS_H
