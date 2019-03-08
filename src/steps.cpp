@@ -37,7 +37,7 @@ ReferenceState prepareReferenceState(const pp_input& in, long index) {
     double prev_x = in.previous_path_x[index - 1];
     double prev_y = in.previous_path_y[index - 1];
 
-    ref.yaw = atan2(ref.xy_h(1) - prev_y, ref.xy_h(0) - prev_x);
+    ref.yaw = atan2(ref.getY() - prev_y, ref.getX() - prev_x);
 
   }
 
@@ -51,7 +51,7 @@ ReferencePoses createPoses(const ReferenceState& ref) {
 
   ReferencePoses poses{};
 
-  poses.ego_in_world = createPose(ref.xy_h(0), ref.xy_h(1), ref.yaw);
+  poses.ego_in_world = createPose(ref.getX(), ref.getY(), ref.yaw);
   poses.world_in_ego = invertPose(poses.ego_in_world);
 
   return poses;
@@ -89,8 +89,8 @@ Eigen::VectorXd fitPolynomial(const pp_input& in,
     Eigen::VectorXd p = points[i];
     Eigen::VectorXd p_t = poses.world_in_ego * p;
 
-    anchor_x(i) = p_t(0) / p_t(2);
-    anchor_y(i) = p_t(1) / p_t(2);
+    anchor_x(i) = getXFromH(p_t);
+    anchor_y(i) = getYFromH(p_t);
   }
 
   Eigen::VectorXd coeffs = polyfit(anchor_x, anchor_y, 3);
@@ -148,8 +148,8 @@ void fillNextXYTargetV(pp_output* out,
 
     Eigen::VectorXd p_world = poses.ego_in_world * p;
 
-    out->next_x_vals.push_back(p_world(0) / p_world(2));
-    out->next_y_vals.push_back(p_world(1) / p_world(2));
+    out->next_x_vals.push_back(getXFromH(p_world));
+    out->next_y_vals.push_back(getYFromH(p_world));
 
   }
 
@@ -264,4 +264,3 @@ int checkIfSafeToChangeLane(const pp_input& in, int current_lane) {
   return -1;
 
 }
-
