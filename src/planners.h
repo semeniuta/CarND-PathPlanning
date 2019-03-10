@@ -32,6 +32,7 @@ private:
   double target_velocity_{MAX_SPEED_MPH};
   bool start_{true};
   ego_state state_{ego_state::start};
+  int lc_counter_{-1};
 
 
 };

@@ -19,17 +19,22 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   pp_output out{};
 
   too_close_ = checkForCarInFront(in, target_lane_, 40);
-  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.15, 30);
+  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.1, 30);
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
 
   double lane_d = laneD(target_lane_);
-  //double lane_d_0 = laneD(source_lane_); // TODO Put in use
+  double lane_d_0 = laneD(source_lane_);
+
+  const int lc_counter_resolution = 50;
+  double d_diff = lc_counter_ * ((lane_d - lane_d_0) / lc_counter_resolution);
+  double target_d = lane_d - d_diff;
+
   std::vector<frenet_coord> next_frenet_points = {
-      {30, lane_d},
-      {60, lane_d},
-      {90, lane_d},
+      {30, target_d},
+      {60, target_d},
+      {90, target_d},
   };
 
   Eigen::VectorXd coeffs = fitPolynomial(in, wp, ref, next_frenet_points, poses);
@@ -71,17 +76,24 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
       } else {
 
         int new_lane = checkIfSafeToChangeLane(in, target_lane_);
-        bool safe_to_change_lane = (new_lane != -1);
+        bool safe_to_change_lane = (new_lane != -1) && (target_velocity_ < 32);
         if (safe_to_change_lane) {
 
           source_lane_ = target_lane_;
           target_lane_ = new_lane;
 
-          //fillNextXYFromPrevious(&out, in, 5);
-          // TODO Implement a better way to initiate lane change
+          lc_counter_ = lc_counter_resolution;
 
-          out = JMTLaneChange(in, wp, laneD(source_lane_), laneD(target_lane_), 30);
-          std::cout << "CHANGE\n";
+          fillNextXYFromPrevious(&out, in, 5);
+
+          // --------------------------------------------------
+
+//          double d_src = laneD(source_lane_);
+//          double d_dst = (d_src + laneD(target_lane_)) / 2.;
+//          out = JMTLaneChange(in, wp, d_src, d_dst, 20);
+//          std::cout << "CHANGE\n";
+
+          // --------------------------------------------------
 
           state_ = ego_state::change_lane;
 
@@ -98,6 +110,12 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
     break;
 
     case ego_state::change_lane: {
+
+      //source_lane_ = target_lane_;
+
+      if (lc_counter_ > 0) {
+        lc_counter_--;
+      }
 
       fillNextXYFromPrevious(&out, in);
       fillNextXYTargetV(&out, in, target_velocity_, poses, coeffs);
