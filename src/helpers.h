@@ -79,4 +79,8 @@ double getXFromH(const Eigen::VectorXd& vec_h);
 
 double getYFromH(const Eigen::VectorXd& vec_h);
 
+vector<double> JMT(vector<double>& start, vector<double>& end, double t);
+
+double QuinticPoly(std::vector<double> a, double t);
+
 #endif  // HELPERS_H

@@ -453,3 +453,69 @@ double getYFromH(const Eigen::VectorXd& vec_h) {
   return vec_h(1) / vec_h(2);
 
 }
+
+vector<double> JMT(vector<double>& start, vector<double>& end, double t) {
+  /**
+   * Calculate the Jerk Minimizing Trajectory that connects the initial state
+   * to the final state in time t.
+   *
+   * @param start - the vehicles start location given as a length three array
+   *   corresponding to initial values of [s, s_dot, s_double_dot]
+   * @param end - the desired end state for vehicle. Like "start" this is a
+   *   length three array.
+   * @param t - The duration, in seconds, over which this maneuver should occur.
+   *
+   * @output an array of length 6, each value corresponding to a coefficent in
+   *   the polynomial:
+   *   s(t) = a_0 + a_1 * t + a_2 * t**2 + a_3 * t**3 + a_4 * t**4 + a_5 * t**5
+   *
+   * EXAMPLE
+   *   > JMT([0, 10, 0], [10, 10, 0], 1)
+   *     [0.0, 10.0, 0.0, 0.0, 0.0, 0.0]
+   */
+
+  double si = start[0];
+  double si_d = start[1];
+  double si_dd = start[2];
+
+  double sf = end[0];
+  double sf_d = end[1];
+  double sf_dd = end[2];
+
+  double t2 = t * t;
+  double t3 = t2 * t;
+  double t4 = t3 * t;
+  double t5 = t4 * t;
+
+  Eigen::MatrixXd A{3, 3};
+  Eigen::VectorXd b{3};
+  Eigen::VectorXd x{3};
+
+  A << t3, t4, t5,
+       3*t2, 4*t3, 5*t4,
+       6*t, 12*t2, 20*t3;
+
+  b << sf - (si + si_d * t + 0.5 * si_dd * t2),
+       sf_d - (si_d + si_dd * t),
+       sf_dd - si_dd;
+
+  x = A.colPivHouseholderQr().solve(b);
+
+  double a0 = si;
+  double a1 = si_d;
+  double a2 = 0.5 * si_dd;
+
+  return {a0, a1, a2, x(0), x(1), x(2)};
+
+}
+
+double QuinticPoly(std::vector<double> a, double t) {
+
+  double res = a[0];
+
+  for (int i = 1; i <= 5; i++) {
+    res += (a[i] * pow(t, i));
+  }
+
+  return res;
+}
