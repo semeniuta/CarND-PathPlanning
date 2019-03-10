@@ -77,8 +77,10 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
           source_lane_ = target_lane_;
           target_lane_ = new_lane;
 
-          fillNextXYFromPrevious(&out, in, 5);
+          //fillNextXYFromPrevious(&out, in, 5);
           // TODO Implement a better way to initiate lane change
+          out = JMTLaneChange(in, wp, source_lane_, target_lane_, 50);
+          std::cout << "CHANGE\n";
 
           state_ = ego_state::change_lane;
 

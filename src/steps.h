@@ -72,4 +72,10 @@ std::vector<vehicle_info> lookAround(const pp_input& in);
 
 int checkIfSafeToChangeLane(const pp_input& in, int current_lane);
 
+pp_output JMTLaneChange(const pp_input& in,
+                        const map_waypoints& wp,
+                        int source_lane,
+                        int target_lane,
+                        double s_dist);
+
 #endif //PATH_PLANNING_STEPS_H

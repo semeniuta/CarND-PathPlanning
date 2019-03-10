@@ -273,3 +273,47 @@ int checkIfSafeToChangeLane(const pp_input& in, int current_lane) {
   return -1;
 
 }
+
+pp_output JMTLaneChange(const pp_input& in,
+                        const map_waypoints& wp,
+                        int source_lane,
+                        int target_lane,
+                        double s_dist) {
+
+  double d0 = laneD(source_lane);
+  double d1 = laneD(target_lane);
+  double s0 = in.car_s;
+  double s1 = s0 + s_dist;
+  double v0 = in.car_speed;
+  double v1 = 30;
+  double t = 1.;
+
+  // position, velocity, acceleration
+  std::vector<double> d_start = {d0, 0, 0};
+  std::vector<double> d_end   = {d1, 0, 0};
+  std::vector<double> s_start = {s0, v0, 0};
+  std::vector<double> s_end   = {s1, v1, 0};
+
+  auto jmt_d = JMT(d_start, d_end, t);
+  auto jmt_s = JMT(s_start, s_end, t);
+
+  pp_output out{};
+
+  double t_now;
+  double s;
+  double d;
+  for (int i = 1; i < 50; i++) {
+    t_now = i * DT;
+
+    s = QuinticPoly(jmt_s, t_now);
+    d = QuinticPoly(jmt_d, t_now);
+
+    auto xy = getXY(s, d, wp.s, wp.x, wp.y);
+    out.next_x_vals.push_back(xy[0]);
+    out.next_y_vals.push_back(xy[1]);
+
+  }
+
+  return out;
+
+}
