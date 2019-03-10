@@ -27,7 +27,7 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   double lane_d = laneD(target_lane_);
   double lane_d_0 = laneD(source_lane_);
 
-  const int lc_counter_resolution = 50;
+  const int lc_counter_resolution = 80;
   double d_diff = lc_counter_ * ((lane_d - lane_d_0) / lc_counter_resolution);
   double target_d = lane_d - d_diff;
 
@@ -76,7 +76,8 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
       } else {
 
         int new_lane = checkIfSafeToChangeLane(in, target_lane_);
-        bool safe_to_change_lane = (new_lane != -1) && (target_velocity_ < 32);
+        bool safe_to_change_lane = (new_lane != -1) && (target_velocity_ < 40);
+        //bool safe_to_change_lane = (new_lane != -1);
         if (safe_to_change_lane) {
 
           source_lane_ = target_lane_;

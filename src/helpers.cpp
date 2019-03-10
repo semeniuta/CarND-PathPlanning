@@ -438,11 +438,11 @@ bool safeInLane(int lane, const std::vector<vehicle_info>& vehiles_info) {
 
     bool not_safe_dist = false;
 
-    if (info.s_dist >= 0 && info.s_dist < 20) {
+    if (info.s_dist >= 0 && info.s_dist < 40) {
       not_safe_dist = true;
     }
 
-    if (info.s_dist < 0 && fabs(info.s_dist) < 10) {
+    if (info.s_dist < 0 && fabs(info.s_dist) < 20) {
       not_safe_dist = true;
     }
 
