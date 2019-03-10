@@ -143,12 +143,23 @@ void fillNextXYTargetV(pp_output* out,
   auto prev_path_size = out->next_x_vals.size();
 
   double target_velocity = MPH2Metric(target_velocity_mph);
-  double dx = target_velocity * DT;
+  double delta = target_velocity * DT;
   auto n_poly_points = TRAJ_SIZE - prev_path_size;
+
+  double x = 0;
 
   for (unsigned int i = 0; i < n_poly_points; i++) {
 
-    double x = (i + 1) * dx;
+    double y1 = polyeval(coeffs, x);
+    double y2 = polyeval(coeffs, x + delta);
+    double dy = y2 - y1;
+
+    double angle = atan2(dy, delta);
+    double dx = delta * cos(angle);
+
+    std::cout << "dx = " << dx << "delta = " << delta << "\n";
+
+    x = (i + 1) * dx;
     double y = polyeval(coeffs, x);
 
     Eigen::VectorXd p{3};
