@@ -276,12 +276,10 @@ int checkIfSafeToChangeLane(const pp_input& in, int current_lane) {
 
 pp_output JMTLaneChange(const pp_input& in,
                         const map_waypoints& wp,
-                        int source_lane,
-                        int target_lane,
+                        double d0,
+                        double d1,
                         double s_dist) {
 
-  double d0 = laneD(source_lane);
-  double d1 = laneD(target_lane);
   double s0 = in.car_s;
   double s1 = s0 + s_dist;
   double v0 = in.car_speed;

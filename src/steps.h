@@ -74,8 +74,8 @@ int checkIfSafeToChangeLane(const pp_input& in, int current_lane);
 
 pp_output JMTLaneChange(const pp_input& in,
                         const map_waypoints& wp,
-                        int source_lane,
-                        int target_lane,
+                        double d0,
+                        double d1,
                         double s_dist);
 
 #endif //PATH_PLANNING_STEPS_H
