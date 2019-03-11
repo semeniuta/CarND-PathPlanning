@@ -8,7 +8,7 @@ const double DT = 0.02;
 const int TRAJ_SIZE = 50;
 const double VELOCITY_INCREMENT = 0.1;
 
-const double MAX_SPEED_MPH = 49;
+const double MAX_SPEED_MPH = 45;
 const double MIN_SPEED_MPH = 30;
 const double ACCEL_TO_MPH = 20;
 
