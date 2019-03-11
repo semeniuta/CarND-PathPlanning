@@ -335,9 +335,6 @@ void printVector(const std::vector<double>& vec) {
 
 std::vector<double> accel(double start_v, double target_v, double accel_t) {
 
-  const int TRAJ_SIZE = 50;
-  const double DT = 0.02;
-
   double target_dx = target_v * DT;
   double start_dx = start_v * DT;
 
@@ -432,17 +429,13 @@ bool safeInLane(int lane, const std::vector<vehicle_info>& vehiles_info) {
 
   for (const auto& info : vehiles_info) {
 
-//    if (info.lane == lane && fabs(info.s_dist) < 20) {
-//        return false;
-//    }
-
     bool not_safe_dist = false;
 
-    if (info.s_dist >= 0 && info.s_dist < 40) {
+    if (info.s_dist >= 0 && info.s_dist < DIST_FRONT) {
       not_safe_dist = true;
     }
 
-    if (info.s_dist < 0 && fabs(info.s_dist) < 20) {
+    if (info.s_dist < 0 && fabs(info.s_dist) < DIST_BACK) {
       not_safe_dist = true;
     }
 

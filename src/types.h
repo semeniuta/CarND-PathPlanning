@@ -4,7 +4,21 @@
 
 #ifndef PATH_PLANNING_TYPES_H
 
-const double MAX_SPEED_MPH = 49.;
+const double DT = 0.02;
+const int TRAJ_SIZE = 50;
+const double VELOCITY_INCREMENT = 0.1;
+
+const double MAX_SPEED_MPH = 49;
+const double MIN_SPEED_MPH = 30;
+const double ACCEL_TO_MPH = 20;
+
+const double TOO_CLOSE_DIST = 40;
+const double DIST_FRONT = 40;
+const double DIST_BACK = 20;
+
+const double LC_SAFE_VELOCITY = 40;
+const int LC_COUNTER_RESOLUTION = 80;
+const int LC_N_PREV = 5;
 
 struct map_waypoints {
   std::vector<double> x;

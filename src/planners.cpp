@@ -18,8 +18,8 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
   pp_output out{};
 
-  too_close_ = checkForCarInFront(in, target_lane_, 40);
-  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, 0.1, 30);
+  too_close_ = checkForCarInFront(in, target_lane_, TOO_CLOSE_DIST);
+  target_velocity_ = updateTargetVelocity(too_close_, target_velocity_, VELOCITY_INCREMENT, MIN_SPEED_MPH);
 
   ReferenceState ref = prepareReferenceState(in);
   ReferencePoses poses = createPoses(ref);
@@ -27,8 +27,7 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
   double lane_d = laneD(target_lane_);
   double lane_d_0 = laneD(source_lane_);
 
-  const int lc_counter_resolution = 80;
-  double d_diff = lc_counter_ * ((lane_d - lane_d_0) / lc_counter_resolution);
+  double d_diff = lc_counter_ * ((lane_d - lane_d_0) / LC_COUNTER_RESOLUTION);
   double target_d = lane_d - d_diff;
 
   std::vector<frenet_coord> next_frenet_points = {
@@ -43,11 +42,10 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
 
     case ego_state::start: {
 
-      double accel_to_mph = 20;
-      fillNextNYFirstTime(&out, accel_to_mph, poses, coeffs);
+      fillNextNYFirstTime(&out, ACCEL_TO_MPH, poses, coeffs);
 
       start_ = false;
-      target_velocity_ = accel_to_mph + 1;
+      target_velocity_ = ACCEL_TO_MPH + 1;
 
       state_ = ego_state::keep_lane;
 
@@ -76,25 +74,15 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
       } else {
 
         int new_lane = checkIfSafeToChangeLane(in, target_lane_);
-        bool safe_to_change_lane = (new_lane != -1) && (target_velocity_ < 40);
-        //bool safe_to_change_lane = (new_lane != -1);
+        bool safe_to_change_lane = (new_lane != -1) && (target_velocity_ < LC_SAFE_VELOCITY);
         if (safe_to_change_lane) {
 
           source_lane_ = target_lane_;
           target_lane_ = new_lane;
 
-          lc_counter_ = lc_counter_resolution;
+          lc_counter_ = LC_COUNTER_RESOLUTION;
 
-          fillNextXYFromPrevious(&out, in, 5);
-
-          // --------------------------------------------------
-
-//          double d_src = laneD(source_lane_);
-//          double d_dst = (d_src + laneD(target_lane_)) / 2.;
-//          out = JMTLaneChange(in, wp, d_src, d_dst, 20);
-//          std::cout << "CHANGE\n";
-
-          // --------------------------------------------------
+          fillNextXYFromPrevious(&out, in, LC_N_PREV);
 
           state_ = ego_state::change_lane;
 
@@ -111,8 +99,6 @@ pp_output TrafficAwarePathPlanner::plan(const pp_input& in, const map_waypoints&
     break;
 
     case ego_state::change_lane: {
-
-      //source_lane_ = target_lane_;
 
       if (lc_counter_ > 0) {
         lc_counter_--;

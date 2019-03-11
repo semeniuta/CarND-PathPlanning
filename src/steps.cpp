@@ -23,16 +23,16 @@ ReferenceState prepareReferenceState(const pp_input& in, long index) {
   if (prev_path_size < 2) {
 
     ref.xy_h << in.car_x,
-        in.car_y,
-        1;
+                in.car_y,
+                       1;
 
     ref.yaw = deg2rad(in.car_yaw);
 
   } else {
 
     ref.xy_h << in.previous_path_x[index],
-        in.previous_path_y[prev_path_size - 1],
-        1;
+                in.previous_path_y[prev_path_size - 1],
+                                                    1;
 
     double prev_x = in.previous_path_x[index - 1];
     double prev_y = in.previous_path_y[index - 1];
@@ -157,7 +157,7 @@ void fillNextXYTargetV(pp_output* out,
     double angle = atan2(dy, delta);
     double dx = delta * cos(angle);
 
-    std::cout << "dx = " << dx << "delta = " << delta << "\n";
+    std::cout << "dx = " << dx << ", delta = " << delta << "\n";
 
     x = (i + 1) * dx;
     double y = polyeval(coeffs, x);
@@ -290,6 +290,15 @@ pp_output JMTLaneChange(const pp_input& in,
                         double d0,
                         double d1,
                         double s_dist) {
+
+  // --------------------------------------------------
+  // Example of usage:
+
+  //    double d_src = laneD(source_lane_);
+  //    double d_dst = laneD(target_lane_);
+  //    out = JMTLaneChange(in, wp, d_src, d_dst, 20);
+
+  // --------------------------------------------------
 
   double s0 = in.car_s;
   double s1 = s0 + s_dist;

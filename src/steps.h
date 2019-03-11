@@ -8,9 +8,6 @@
 #include "Eigen-3.3/Eigen/Dense"
 #include "planners.h"
 
-const int TRAJ_SIZE = 50;
-const double DT = 0.02;
-
 struct ReferenceState {
   Eigen::VectorXd xy_h{3};
   double yaw;
