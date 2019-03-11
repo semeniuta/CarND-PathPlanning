@@ -4,7 +4,7 @@
 
 #ifndef PATH_PLANNING_TYPES_H
 
-const double MAX_SPEED_MPH = 49.5;
+const double MAX_SPEED_MPH = 49.;
 
 struct map_waypoints {
   std::vector<double> x;
